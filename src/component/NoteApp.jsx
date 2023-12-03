@@ -34,14 +34,16 @@ class NoteApp extends React.Component {
         title,
         body,
         archived: false,
+        createdAt: new Date().toISOString(),
       };
-
+  
       return {
         notes: [...prevState.notes, newNote],
         filteredNotes: prevState.filteredNotes ? [...prevState.filteredNotes, newNote] : null,
       };
     });
   }
+  
 
   onSearchHandler(keyword) {
     const filteredNotes = this.state.notes.filter(
@@ -55,18 +57,19 @@ class NoteApp extends React.Component {
     const updatedNotes = this.state.notes.map((note) =>
       note.id === id ? { ...note, archived: !note.archived } : note
     );
-
+  
     const updatedFilteredNotes = this.state.filteredNotes
       ? this.state.filteredNotes.map((note) =>
           note.id === id ? { ...note, archived: !note.archived } : note
         )
       : null;
-
+  
     this.setState({
       notes: updatedNotes,
-      filteredNotes: updatedFilteredNotes,
+      filteredNotes: updatedFilteredNotes || updatedNotes,
     });
   }
+  
 
   render() {
     const { filteredNotes, notes } = this.state;

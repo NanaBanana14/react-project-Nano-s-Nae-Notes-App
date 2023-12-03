@@ -13,7 +13,7 @@ function NoteItem({ id, title, body, createdAt, onDelete, onArchive, archived })
           <ArchiveButton id={id} onArchive={onArchive} />
         ) : (
           <button className="note-item__archive-button" onClick={() => onArchive(id)}>
-            Arsip
+            Archive
           </button>
         )}
       </div>
