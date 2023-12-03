@@ -87,18 +87,25 @@ class NoteApp extends React.Component {
           placeholder="Search by title"
           onChange={(e) => this.onSearchHandler(e.target.value)}
         />
+        {/* Display message when no matching notes found during search */}
+        {filteredNotes && filteredNotes.length === 0 && <p>No notes found matching the search criteria.</p>}
+
         <h2>Notes List</h2>
         <NoteList
           notes={activeNotes}
           onDelete={this.onDeleteHandler}
           onArchive={this.onArchiveHandler}
         />
+        {/* Display message when there are no active notes */}
+        {activeNotes.length === 0 && <p>There are no history of added notes.</p>}
         <h2>Archived Note</h2>
         <NoteList
           notes={archivedNotes}
           onDelete={this.onDeleteHandler}
           onArchive={this.onArchiveHandler}
         />
+        {/* Display message when there are no archived notes */}
+        {archivedNotes.length === 0 && <p>There are no notes archived.</p>}
       </div>
     );
   }
