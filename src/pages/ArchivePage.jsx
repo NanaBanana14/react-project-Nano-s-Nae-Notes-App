@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import NoteList from '../component/NoteList';
 import SearchBar from '../component/SearchBar';
 import {
@@ -9,72 +9,66 @@ import {
   unarchiveNote,
 } from '../utils/index';
 
-class ArchivePage extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      notes: getAllNotes(),
-      filteredNotes: null,
-    };
+function ArchivePage() {
+  const [notes, setNotes] = useState(getAllNotes());
+  const [filteredNotes, setFilteredNotes] = useState(null);
+  const [keyword, setKeyword] = useState('');
 
-    this.onDeleteHandler = this.onDeleteHandler.bind(this);
-    this.onSearchHandler = this.onSearchHandler.bind(this);
-    this.onArchiveHandler = this.onArchiveHandler.bind(this);
-    this.onUnarchiveHandler = this.onUnarchiveHandler.bind(this);
-    this.updateNotes = this.updateNotes.bind(this);
-  }
+  useEffect(() => {
+    setNotes(getAllNotes());
+  }, []);
 
-  onDeleteHandler(id) {
+  const onDeleteHandler = (id) => {
     deleteNote(id);
-    this.updateNotes();
-  }
+    updateNotes();
+  };
 
-  onSearchHandler(keyword) {
+  const onKeywordChangeHandler = (newKeyword) => {
+    setKeyword(newKeyword);
     const filteredNotes = getAllNotes().filter(
-      (note) => note.title.toLowerCase().includes(keyword.toLowerCase())
+      (note) => note.title.toLowerCase().includes(newKeyword.toLowerCase())
     );
 
-    this.setState({ filteredNotes });
-  }
+    setFilteredNotes(filteredNotes);
+  };
 
-  onArchiveHandler(id) {
+  const onArchiveHandler = (id) => {
     archiveNote(id);
-    this.updateNotes();
-  }
+    updateNotes();
+  };
 
-  onUnarchiveHandler(id) {
+  const onUnarchiveHandler = (id) => {
     unarchiveNote(id);
-    this.updateNotes();
-  }
+    updateNotes();
+  };
 
-  updateNotes() {
-    this.setState({
-      notes: getAllNotes(),
-      filteredNotes: null,
-    });
-  }
+  const updateNotes = () => {
+    setNotes(getAllNotes());
+    setFilteredNotes(null);
+  };
 
-  render() {
-    const { filteredNotes, notes } = this.state;
-    const archivedNotes = filteredNotes ? filteredNotes.filter(note => note.archived) : getArchivedNotes();
+  const archivedNotes = filteredNotes
+    ? filteredNotes.filter((note) => note.archived)
+    : getArchivedNotes();
 
-    return (
-      <div className="note-app__body">
-        <h1 className="note-app__header">Your Archived Notes</h1>
-        <SearchBar onSearch={this.onSearchHandler} />
-        {filteredNotes && filteredNotes.length === 0 && <p>No notes found matching the search criteria.</p>}
+  return (
+    <div className="note-app__body">
+      <h1 className="note-app__header">Your Archived Notes</h1>
+      <SearchBar keyword={keyword} keywordChange={onKeywordChangeHandler} />
+      {filteredNotes && filteredNotes.length === 0 && (
+        <p>No notes found matching the search criteria.</p>
+      )}
 
-        <NoteList
-          notes={archivedNotes}
-          onDelete={this.onDeleteHandler}
-          onArchive={this.onArchiveHandler}
-          onUnarchive={this.onUnarchiveHandler}
-        />
-        {/* Display message when there are no archived notes */}
-        {archivedNotes.length === 0 && <p>There are no notes archived.</p>}
-      </div>
-    );
-  }
+      <NoteList
+        notes={archivedNotes}
+        onDelete={onDeleteHandler}
+        onArchive={onArchiveHandler}
+        onUnarchive={onUnarchiveHandler}
+      />
+      {/* Display message when there are no archived notes */}
+      {archivedNotes.length === 0 && <p>There are no notes archived.</p>}
+    </div>
+  );
 }
 
 export default ArchivePage;
