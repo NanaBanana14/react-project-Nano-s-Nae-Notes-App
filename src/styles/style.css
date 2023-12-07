@@ -154,18 +154,23 @@ main {
 
 .note-item__action {
   display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 10px;
 }
 
-.note-item__delete-button,.note-item__archive-button {
-  display: block;
-  width: 100%;
+.note-item__delete-button,
+.note-item__archive-button,
+.note-item__detail-button {
+  flex: 2;
   background-color: transparent;
   border: 0;
   border-top: 1px solid #aaa;
-  padding: 8px 0;
+  padding: 8px 12px;
   font-family: 'Inter', sans-serif;
   font-weight: bold;
   cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .note-item__delete-button {
@@ -183,6 +188,15 @@ main {
 
 .note-item__delete-button:hover {
   color: #b00020;
+}
+
+.note-item__detail-button {
+  border-left: 1px solid #aaa;
+  color: white;
+}
+
+.note-item__detail-button:hover {
+  color: green;
 }
 
 @media only screen and (min-width: 500px) {

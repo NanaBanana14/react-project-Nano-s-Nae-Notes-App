@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHome, faPenToSquare, faBoxArchive } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faPenToSquare, faBoxArchive, faUser } from '@fortawesome/free-solid-svg-icons';
 
 function Navigation() {
   return (
@@ -20,6 +20,11 @@ function Navigation() {
         <li>
           <Link to="/archive">
             <FontAwesomeIcon icon={faBoxArchive} style={{ color: "#ffffff" }} />
+          </Link>
+        </li>
+        <li>
+          <Link to="*">
+            <FontAwesomeIcon icon={faUser} style={{ color: "#ffffff" }} />
           </Link>
         </li>
       </ul>
