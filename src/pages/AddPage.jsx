@@ -1,38 +1,28 @@
-import React from 'react';
+import React, { useState } from 'react';
 import NoteInput from '../component/NoteInput';
 import { getAllNotes, addNote } from '../utils/index';
+import { useNavigate } from 'react-router-dom';
 
-class AddPage extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      notes: getAllNotes(),
-      filteredNotes: null,
-    };
+function AddPage() {
+  const [notes, setNotes] = useState(getAllNotes());
+  const navigate = useNavigate();
 
-    this.onAddNoteHandler = this.onAddNoteHandler.bind(this);
-    this.updateNotes = this.updateNotes.bind(this); // Tambahkan pengikatan untuk updateNotes
-  }
+  const updateNotes = () => {
+    setNotes(getAllNotes());
+  };
 
-  onAddNoteHandler({ title, body }) {
+  const onAddNoteHandler = ({ title, body }) => {
     addNote({ title, body });
-    this.updateNotes();
-  }
+    updateNotes();
+    navigate('/');
+  };
 
-  updateNotes() {
-    this.setState({
-      notes: getAllNotes(),
-    });
-  }
-
-  render() {
-    return (
-      <div className="note-app__body">
-        <h1 className="note-app__header">Add Your Note</h1>
-        <NoteInput addNote={this.onAddNoteHandler} />
-      </div>
-    );
-  }
+  return (
+    <div className="note-app__body">
+      <h1 className="note-app__header">Add Your Note</h1>
+      <NoteInput addNote={onAddNoteHandler} />
+    </div>
+  );
 }
 
 export default AddPage;
