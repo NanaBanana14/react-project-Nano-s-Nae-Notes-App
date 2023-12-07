@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import NoteInput from '../component/NoteInput';
 import { getAllNotes, addNote } from '../utils/index';
 import { useNavigate } from 'react-router-dom';
@@ -24,5 +25,10 @@ function AddPage() {
     </div>
   );
 }
+
+AddPage.propTypes = {
+  title: PropTypes.string,
+  body: PropTypes.string,
+};
 
 export default AddPage;

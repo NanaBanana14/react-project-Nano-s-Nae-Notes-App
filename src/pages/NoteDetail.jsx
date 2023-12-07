@@ -1,5 +1,6 @@
 import React from 'react';
-import { useParams, Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { useParams } from 'react-router-dom';
 import { getNote, showFormattedDate } from '../utils';
 
 function NoteDetail() {
@@ -18,5 +19,9 @@ function NoteDetail() {
     </div>
   );
 }
+
+NoteDetail.propTypes = {
+  id: PropTypes.string,
+};
 
 export default NoteDetail;

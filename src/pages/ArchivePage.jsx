@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+// import PropTypes from 'prop-types';
 import NoteList from '../component/NoteList';
 import SearchBar from '../component/SearchBar';
 import {
