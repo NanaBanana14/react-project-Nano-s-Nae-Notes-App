@@ -1,13 +1,24 @@
 import React from 'react';
 import NoteList from './NoteList';
-import { getInitialData } from '../utils/index';
 import NoteInput from './NoteInput';
+import SearchBar from './SearchBar';
+import {
+  getAllNotes,
+  getActiveNotes,
+  getArchivedNotes,
+  deleteNote,
+  editNote,
+  getNote,
+  archiveNote,
+  unarchiveNote,
+  addNote,
+} from '../utils/index';
 
 class NoteApp extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      notes: getInitialData(),
+      notes: getAllNotes(),
       filteredNotes: null,
     };
 
@@ -15,38 +26,22 @@ class NoteApp extends React.Component {
     this.onAddNoteHandler = this.onAddNoteHandler.bind(this);
     this.onSearchHandler = this.onSearchHandler.bind(this);
     this.onArchiveHandler = this.onArchiveHandler.bind(this);
+    this.onUnarchiveHandler = this.onUnarchiveHandler.bind(this);
+    this.updateNotes = this.updateNotes.bind(this);
   }
 
   onDeleteHandler(id) {
-    const updatedNotes = this.state.notes.filter((note) => note.id !== id);
-    const updatedFilteredNotes = this.state.filteredNotes ? this.state.filteredNotes.filter((note) => note.id !== id) : null;
-
-    this.setState({
-      notes: updatedNotes,
-      filteredNotes: updatedFilteredNotes,
-    });
+    deleteNote(id);
+    this.updateNotes();
   }
 
   onAddNoteHandler({ title, body }) {
-    this.setState((prevState) => {
-      const newNote = {
-        id: +new Date(),
-        title,
-        body,
-        archived: false,
-        createdAt: new Date().toISOString(),
-      };
-  
-      return {
-        notes: [...prevState.notes, newNote],
-        filteredNotes: prevState.filteredNotes ? [...prevState.filteredNotes, newNote] : null,
-      };
-    });
+    addNote({ title, body });
+    this.updateNotes();
   }
-  
 
   onSearchHandler(keyword) {
-    const filteredNotes = this.state.notes.filter(
+    const filteredNotes = getAllNotes().filter(
       (note) => note.title.toLowerCase().includes(keyword.toLowerCase())
     );
 
@@ -54,39 +49,36 @@ class NoteApp extends React.Component {
   }
 
   onArchiveHandler(id) {
-    const updatedNotes = this.state.notes.map((note) =>
-      note.id === id ? { ...note, archived: !note.archived } : note
-    );
-  
-    const updatedFilteredNotes = this.state.filteredNotes
-      ? this.state.filteredNotes.map((note) =>
-          note.id === id ? { ...note, archived: !note.archived } : note
-        )
-      : null;
-  
+    archiveNote(id);
+    this.updateNotes();
+  }
+
+  onUnarchiveHandler(id) {
+    unarchiveNote(id);
+    this.updateNotes();
+  }
+
+  updateNotes() {
     this.setState({
-      notes: updatedNotes,
-      filteredNotes: updatedFilteredNotes || updatedNotes,
+      notes: getAllNotes(),
+      filteredNotes: null,
     });
   }
-  
 
   render() {
     const { filteredNotes, notes } = this.state;
-    const activeNotes = filteredNotes ? filteredNotes.filter(note => !note.archived) : notes;
-    const archivedNotes = filteredNotes ? filteredNotes.filter(note => note.archived) : [];
+    const activeNotes = filteredNotes ? filteredNotes.filter(note => !note.archived) : getActiveNotes();
+    const archivedNotes = filteredNotes ? filteredNotes.filter(note => note.archived) : getArchivedNotes();
 
     return (
       <div className="note-app__body">
         <h1 className="note-app__header">My Notes List</h1>
         <h2>Add Notes</h2>
         <NoteInput addNote={this.onAddNoteHandler} />
+
         <h2>Search Notes</h2>
-        <input
-          type="text"
-          placeholder="Search by title"
-          onChange={(e) => this.onSearchHandler(e.target.value)}
-        />
+        <SearchBar onSearch={this.onSearchHandler} />
+
         {/* Display message when no matching notes found during search */}
         {filteredNotes && filteredNotes.length === 0 && <p>No notes found matching the search criteria.</p>}
 
@@ -95,14 +87,17 @@ class NoteApp extends React.Component {
           notes={activeNotes}
           onDelete={this.onDeleteHandler}
           onArchive={this.onArchiveHandler}
+          onUnarchive={this.onUnarchiveHandler}
         />
         {/* Display message when there are no active notes */}
         {activeNotes.length === 0 && <p>There are no history of added notes.</p>}
+        
         <h2>Archived Note</h2>
         <NoteList
           notes={archivedNotes}
           onDelete={this.onDeleteHandler}
           onArchive={this.onArchiveHandler}
+          onUnarchive={this.onUnarchiveHandler}
         />
         {/* Display message when there are no archived notes */}
         {archivedNotes.length === 0 && <p>There are no notes archived.</p>}
