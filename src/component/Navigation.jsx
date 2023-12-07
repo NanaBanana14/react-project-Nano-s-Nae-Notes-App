@@ -23,7 +23,7 @@ function Navigation() {
           </Link>
         </li>
         <li>
-          <Link to="/nonexistent-page">
+          <Link to="*">
             <FontAwesomeIcon icon={faUser} style={{ color: "#ffffff" }} />
           </Link>
         </li>
