@@ -8,17 +8,23 @@ import {
   unarchiveNote,
 } from '../utils/api';
 import { LocaleConsumer } from '../contexts/LocaleContext';
+import LoadingIndicator from '../component/LoadingIndicator';
 
 function ArchivePage() {
   const [notes, setNotes] = useState([]);
   const [filteredNotes, setFilteredNotes] = useState(null);
   const [keyword, setKeyword] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
-      const result = await getArchivedNotes();
-      if (!result.error) {
-        setNotes(result.data);
+      try {
+        const result = await getArchivedNotes();
+        if (!result.error) {
+          setNotes(result.data);
+        }
+      } finally {
+        setLoading(false);
       }
     }
     fetchData();
@@ -55,10 +61,14 @@ function ArchivePage() {
   };
 
   const updateNotes = async () => {
-    const result = await getArchivedNotes();
-    if (!result.error) {
-      setNotes(result.data);
-      setFilteredNotes(null);
+    try {
+      const result = await getArchivedNotes();
+      if (!result.error) {
+        setNotes(result.data);
+        setFilteredNotes(null);
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -73,24 +83,30 @@ function ArchivePage() {
           <h1 className="note-app__header">
             {locale === 'id' ? 'Catatan Terarsip mu' : 'Your Archived Notes'}
           </h1>
-          <SearchBar keyword={keyword} keywordChange={onKeywordChangeHandler} />
-          {filteredNotes && filteredNotes.length === 0 && (
-            <p>
-              {locale === 'id'
-                ? 'Tidak ada catatan yang cocok dengan kriteria pencarian.'
-                : 'No notes found matching the search criteria.'}
-            </p>
-          )}
+          {loading ? (
+            <LoadingIndicator />
+          ) : (
+            <>
+              <SearchBar keyword={keyword} keywordChange={onKeywordChangeHandler} />
+              {filteredNotes && filteredNotes.length === 0 && (
+                <p>
+                  {locale === 'id'
+                    ? 'Tidak ada catatan yang cocok dengan kriteria pencarian.'
+                    : 'No notes found matching the search criteria.'}
+                </p>
+              )}
 
-          <NoteList
-            notes={archivedNotes}
-            onDelete={onDeleteHandler}
-            onArchive={onArchiveHandler}
-            onUnarchive={onUnarchiveHandler}
-          />
-          {/* Display message when there are no archived notes */}
-          {archivedNotes.length === 0 && (
-            <p>{locale === 'id' ? 'Tidak ada catatan yang terarsip.' : 'There are no notes archived.'}</p>
+              <NoteList
+                notes={archivedNotes}
+                onDelete={onDeleteHandler}
+                onArchive={onArchiveHandler}
+                onUnarchive={onUnarchiveHandler}
+              />
+              {/* Display message when there are no archived notes */}
+              {archivedNotes.length === 0 && (
+                <p>{locale === 'id' ? 'Tidak ada catatan yang terarsip.' : 'There are no notes archived.'}</p>
+              )}
+            </>
           )}
         </div>
       )}

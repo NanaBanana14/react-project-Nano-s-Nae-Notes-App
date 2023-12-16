@@ -10,16 +10,22 @@ import {
   unarchiveNote,
 } from '../utils/api';
 import { LocaleConsumer } from '../contexts/LocaleContext';
+import LoadingIndicator from '../component/LoadingIndicator';
 
 function HomePageWrapper() {
   const [searchParams, setSearchParams] = useSearchParams();
   const keyword = searchParams.get('keyword');
   const [notes, setNotes] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchNotes = async () => {
-      const { data } = await getActiveNotes();
-      setNotes(data);
+      try {
+        const { data } = await getActiveNotes();
+        setNotes(data);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchNotes();
@@ -30,12 +36,18 @@ function HomePageWrapper() {
   }
 
   return (
-    <HomePage
-      notes={notes}
-      defaultKeyword={keyword}
-      keywordChange={changeSearchParams}
-      setNotes={setNotes}
-    />
+    <>
+      {loading ? (
+        <LoadingIndicator />
+      ) : (
+        <HomePage
+          notes={notes}
+          defaultKeyword={keyword}
+          keywordChange={changeSearchParams}
+          setNotes={setNotes}
+        />
+      )}
+    </>
   );
 }
 
@@ -80,6 +92,7 @@ class HomePage extends React.Component {
   }
 
   render() {
+    // eslint-disable-next-line react/prop-types
     const activeNotes = this.props.notes.filter((note) =>
       note.title.toLowerCase().includes(this.state.keyword.toLowerCase())
     );

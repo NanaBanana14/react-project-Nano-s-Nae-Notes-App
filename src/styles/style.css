@@ -52,6 +52,29 @@ main {
   max-width: 1200px;
 }
 
+.loading-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.loading-icon {
+  font-size: 5em;
+  margin-bottom: 10px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-icon {
+  animation: spin 1s linear infinite;
+}
+
+
 .locale-button,
 .logout-button {
   background-color: var(--background-color);
