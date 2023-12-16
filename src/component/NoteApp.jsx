@@ -10,6 +10,7 @@ import RegisterPage from '../pages/RegisterPage';
 import LoginPage from '../pages/LoginPage';
 import { getUserLogged, putAccessToken } from '../utils/api';
 import { ThemeProvider } from '../contexts/ThemeContext';
+import { LocaleProvider } from '../contexts/LocaleContext';
 
 class NoteApp extends React.Component {
   constructor(props) {
@@ -20,6 +21,21 @@ class NoteApp extends React.Component {
       initializing: true,
       theme: localStorage.getItem('theme') || 'light',
       toggleTheme: () => this.toggleTheme(),
+      localeContext: {
+        locale: localStorage.getItem('locale') || 'id',
+        toggleLocale: () => {
+          this.setState((prevState) => {
+            const newLocale = prevState.localeContext.locale === 'id' ? 'en' : 'id';
+            localStorage.setItem('locale', newLocale);
+            return {
+              localeContext: {
+                ...prevState.localeContext,
+                locale: newLocale
+              }
+            }
+          });
+        }
+      }
     };
 
     this.onLoginSuccess = this.onLoginSuccess.bind(this);
@@ -75,7 +91,8 @@ class NoteApp extends React.Component {
 
     if (this.state.authedUser === null) {
       return (
-        <div className={`note-app ${this.state.theme}`}>
+        <LocaleProvider value={this.state.localeContext}>
+          <div className={`note-app ${this.state.theme}`}>
           <header className='note-app__header'>
             <h1>Nano's (Nae Notes) Apps</h1>
           </header>
@@ -86,14 +103,16 @@ class NoteApp extends React.Component {
             </Routes>
           </main>
         </div>
+        </LocaleProvider>
       );
     }
 
     return (
-      <ThemeProvider value={this.state}>
+      <LocaleProvider value={this.state.localeContext}>
+        <ThemeProvider value={this.state}>
         <div className={`note-app ${this.state.theme}`}>
           <header className='note-app__header'>
-            <h1>Nano's (Nae Notes) Apps</h1>
+            <h1>{this.state.localeContext.locale === 'id' ? 'Aplikasi Nano (Nae Notes)' : 'Nano (Nae Notes) Apps'}</h1>
             <Navigation logout={this.onLogout} name={this.state.authedUser.name} />
           </header>
           <main>
@@ -107,6 +126,7 @@ class NoteApp extends React.Component {
           </main>
         </div>
       </ThemeProvider>
+      </LocaleProvider>
     );
   }
 }

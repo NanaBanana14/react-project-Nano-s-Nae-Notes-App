@@ -7,6 +7,7 @@ import {
   archiveNote,
   unarchiveNote,
 } from '../utils/api';
+import { LocaleConsumer } from '../contexts/LocaleContext';
 
 function ArchivePage() {
   const [notes, setNotes] = useState([]);
@@ -66,22 +67,34 @@ function ArchivePage() {
     : notes;
 
   return (
-    <div className="note-app__body">
-      <h1 className="note-app__header">Your Archived Notes</h1>
-      <SearchBar keyword={keyword} keywordChange={onKeywordChangeHandler} />
-      {filteredNotes && filteredNotes.length === 0 && (
-        <p>No notes found matching the search criteria.</p>
-      )}
+    <LocaleConsumer>
+      {({ locale }) => (
+        <div className="note-app__body">
+          <h1 className="note-app__header">
+            {locale === 'id' ? 'Catatan Terarsip mu' : 'Your Archived Notes'}
+          </h1>
+          <SearchBar keyword={keyword} keywordChange={onKeywordChangeHandler} />
+          {filteredNotes && filteredNotes.length === 0 && (
+            <p>
+              {locale === 'id'
+                ? 'Tidak ada catatan yang cocok dengan kriteria pencarian.'
+                : 'No notes found matching the search criteria.'}
+            </p>
+          )}
 
-      <NoteList
-        notes={archivedNotes}
-        onDelete={onDeleteHandler}
-        onArchive={onArchiveHandler}
-        onUnarchive={onUnarchiveHandler}
-      />
-      {/* Display message when there are no archived notes */}
-      {archivedNotes.length === 0 && <p>There are no notes archived.</p>}
-    </div>
+          <NoteList
+            notes={archivedNotes}
+            onDelete={onDeleteHandler}
+            onArchive={onArchiveHandler}
+            onUnarchive={onUnarchiveHandler}
+          />
+          {/* Display message when there are no archived notes */}
+          {archivedNotes.length === 0 && (
+            <p>{locale === 'id' ? 'Tidak ada catatan yang terarsip.' : 'There are no notes archived.'}</p>
+          )}
+        </div>
+      )}
+    </LocaleConsumer>
   );
 }
 

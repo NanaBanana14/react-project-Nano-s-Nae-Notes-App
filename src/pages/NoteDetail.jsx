@@ -13,9 +13,7 @@ function NoteDetail() {
       try {
         const { data } = await getNote(id);
         setNote(data);
-      } catch (error) {
-        console.error('Error fetching note:', error);
-      }
+      } catch (error) { /* empty */ }
     };
 
     fetchNote();

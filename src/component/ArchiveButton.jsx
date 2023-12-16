@@ -1,11 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { LocaleConsumer } from '../contexts/LocaleContext';
 
-function ArchiveButton({ id, onUnarchive }) { // Change onArchive to onUnarchive
+function ArchiveButton({ id, onUnarchive }) {
   return (
-    <button className="note-item__archive-button" onClick={() => onUnarchive(id)}>
-      Unarchive
-    </button>
+    <LocaleConsumer>
+      {({ locale }) => (
+        <button className="note-item__archive-button" onClick={() => onUnarchive(id)}>
+          {locale === 'id' ? 'Batal Arsip' : 'Unarchive'}
+        </button>
+      )}
+    </LocaleConsumer>
   );
 }
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { LocaleConsumer } from '../contexts/LocaleContext';
 
 class NoteInput extends React.Component {
   constructor(props) {
@@ -47,30 +48,34 @@ class NoteInput extends React.Component {
 
   render() {
     return (
-      <form className='note-input' onSubmit={this.onSubmitEventHandler}>
-        <input
-          className="note-input__title__char-limit"
-          type="text"
-          placeholder="Title"
-          value={this.state.title}
-          onChange={this.onTitleChangeEventHandler}
-        />
-        <p>{`${this.state.charLimit - this.state.title.length} characters remaining`}</p>
-        <input
-          className="note-input__body"
-          type="text"
-          placeholder="Note"
-          value={this.state.body}
-          onChange={this.onBodyChangeEventHandler}
-        />
-        <button type="submit">Add Note</button>
-      </form>
+      <LocaleConsumer>
+        {({ locale }) => (
+          <form className='note-input' onSubmit={this.onSubmitEventHandler}>
+            <input
+              className="note-input__title__char-limit"
+              type="text"
+              placeholder={locale === 'id' ? 'Judul' : 'Title'}
+              value={this.state.title}
+              onChange={this.onTitleChangeEventHandler}
+            />
+            <p>{`${this.state.charLimit - this.state.title.length} ${locale === 'id' ? 'karakter tersisa' : 'characters remaining'}`}</p>
+            <input
+              className="note-input__body"
+              type="text"
+              placeholder={locale === 'id' ? 'Catatan' : 'Note'}
+              value={this.state.body}
+              onChange={this.onBodyChangeEventHandler}
+            />
+            <button type="submit">{locale === 'id' ? 'Tambahkan Catatan' : 'Add Note'}</button>
+          </form>
+        )}
+      </LocaleConsumer>
     );
   }
 }
 
 NoteInput.propTypes = {
   addNote: PropTypes.func.isRequired,
- }
+}
 
 export default NoteInput;

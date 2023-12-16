@@ -5,23 +5,28 @@ import NoteItemBody from './NoteItemBody';
 import DeleteButton from './DeleteButton';
 import ArchiveButton from './ArchiveButton';
 import DetailButton from './DetailButton';
+import { LocaleConsumer } from '../contexts/LocaleContext';
 
 function NoteItem({ id, title, body, createdAt, onDelete, onArchive, onUnarchive, archived }) {
   return (
-    <div className="note-item">
-      <NoteItemBody title={title} body={body} createdAt={createdAt} />
-      <div className="note-item__action">
-        <DeleteButton id={id} onDelete={onDelete} />
-        {archived ? (
-          <ArchiveButton id={id} onUnarchive={onUnarchive} />
-        ) : (
-          <button className="note-item__archive-button" onClick={() => onArchive(id)}>
-            Archive
-          </button>
-        )}
-        <DetailButton id={id} />
-      </div>
-    </div>
+    <LocaleConsumer>
+      {({ locale }) => (
+        <div className="note-item">
+          <NoteItemBody title={title} body={body} createdAt={createdAt} />
+          <div className="note-item__action">
+            <DeleteButton id={id} onDelete={onDelete} />
+            {archived ? (
+              <ArchiveButton id={id} onUnarchive={onUnarchive} />
+            ) : (
+              <button className="note-item__archive-button" onClick={() => onArchive(id)}>
+                {locale === 'id' ? 'Arsipkan' : 'Archive'}
+              </button>
+            )}
+            <DetailButton id={id} />
+          </div>
+        </div>
+      )}
+    </LocaleConsumer>
   );
 }
 
@@ -35,6 +40,5 @@ NoteItem.propTypes = {
   archived: PropTypes.bool.isRequired,
   createdAt: PropTypes.string.isRequired,
 };
-
 
 export default NoteItem;

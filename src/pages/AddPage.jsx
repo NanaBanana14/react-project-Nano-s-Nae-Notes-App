@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import NoteInput from '../component/NoteInput';
 import { addNote } from '../utils/api';
 import { useNavigate } from 'react-router-dom';
+import { LocaleConsumer } from '../contexts/LocaleContext';
 
 function AddPage() {
   const navigate = useNavigate();
@@ -17,10 +18,14 @@ function AddPage() {
   };
 
   return (
-    <div className="note-app__body">
-      <h1 className="note-app__header">Add Your Note</h1>
-      <NoteInput addNote={onAddNoteHandler} />
-    </div>
+    <LocaleConsumer>
+      {({ locale }) => (
+        <div className="note-app__body">
+          <h1 className="note-app__header">{locale === 'id' ? 'Tambahkan Notemu' : 'Add Your Note'}</h1>
+          <NoteInput addNote={onAddNoteHandler} />
+        </div>
+      )}
+    </LocaleConsumer>
   );
 }
 

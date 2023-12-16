@@ -9,6 +9,7 @@ import {
   archiveNote,
   unarchiveNote,
 } from '../utils/api';
+import { LocaleConsumer } from '../contexts/LocaleContext';
 
 function HomePageWrapper() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -84,24 +85,31 @@ class HomePage extends React.Component {
     );
 
     return (
-      <div className="note-app__body">
-        <h1 className="note-app__header">My Notes List</h1>
-        <h2>Search Notes</h2>
-        <SearchBar
-          keyword={this.state.keyword}
-          keywordChange={this.onKeywordChangeHandler}
-        />
-
-        <h2>Notes List</h2>
-        <NoteList
-          notes={activeNotes}
-          onDelete={this.onDeleteHandler}
-          onArchive={this.onArchiveHandler}
-          onUnarchive={this.onUnarchiveHandler}
-        />
-        {/* Display message when there are no active notes */}
-        {activeNotes.length === 0 && <p>There are no history of added notes.</p>}
-      </div>
+      <LocaleConsumer>
+      {
+        ({ locale }) => {
+          return (
+            <div className="note-app__body">
+            <h1 className="note-app__header">{locale === 'id' ? 'Daftar List Catatan ku' : 'My Notes List'}</h1>
+            <h2>{locale === 'id' ? 'Cari Catatan' : 'Search Note'}</h2>
+            <SearchBar
+              keyword={this.state.keyword}
+              keywordChange={this.onKeywordChangeHandler}
+            />
+            <h2>{locale === 'id' ? 'Daftar Catatan' : 'Notes List'}</h2>
+            <NoteList
+              notes={activeNotes}
+              onDelete={this.onDeleteHandler}
+              onArchive={this.onArchiveHandler}
+              onUnarchive={this.onUnarchiveHandler}
+            />
+            {/* Display message when there are no active notes */}
+            {activeNotes.length === 0 && <p>{locale === 'id' ? 'Tidak ada riwayat catatan yang ditambahkan.' : 'There are no history of added notes.'}</p>}
+          </div>
+          )
+        }
+      }
+    </LocaleConsumer>
     );
   }
 }
