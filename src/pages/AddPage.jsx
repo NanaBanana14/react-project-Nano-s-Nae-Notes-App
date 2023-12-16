@@ -1,21 +1,19 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import NoteInput from '../component/NoteInput';
-import { getAllNotes, addNote } from '../utils/index';
+import { addNote } from '../utils/api';
 import { useNavigate } from 'react-router-dom';
 
 function AddPage() {
-  const [notes, setNotes] = useState(getAllNotes());
   const navigate = useNavigate();
 
-  const updateNotes = () => {
-    setNotes(getAllNotes());
-  };
-
-  const onAddNoteHandler = ({ title, body }) => {
-    addNote({ title, body });
-    updateNotes();
-    navigate('/');
+  const onAddNoteHandler = async ({ title, body }) => {
+    try {
+      await addNote({ title, body });
+      navigate('/');
+    } catch (error) {
+      console.error('Error adding note:', error);
+    }
   };
 
   return (

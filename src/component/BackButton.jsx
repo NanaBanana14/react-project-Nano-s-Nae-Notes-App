@@ -15,7 +15,7 @@ function BackButton({ to }) {
 }
 
 BackButton.propTypes = {
-  onClick: PropTypes.func,
+  to: PropTypes.func,
 };
 
 export default BackButton;

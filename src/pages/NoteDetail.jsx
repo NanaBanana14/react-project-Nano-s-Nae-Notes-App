@@ -1,11 +1,25 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useParams } from 'react-router-dom';
-import { getNote, showFormattedDate } from '../utils';
+import { getNote } from '../utils/api'; 
+import { showFormattedDate } from '../utils/index';
 
 function NoteDetail() {
   const { id } = useParams();
-  const note = getNote(id);
+  const [note, setNote] = useState(null);
+
+  useEffect(() => {
+    const fetchNote = async () => {
+      try {
+        const { data } = await getNote(id);
+        setNote(data);
+      } catch (error) {
+        console.error('Error fetching note:', error);
+      }
+    };
+
+    fetchNote();
+  }, [id]);
 
   if (!note) {
     return <p>Note not found</p>;
@@ -14,7 +28,7 @@ function NoteDetail() {
   return (
     <div>
       <h1>{note.title}</h1>
-      <p>Created on {showFormattedDate(note.createdAt)}</p>
+      <p>{showFormattedDate(note.createdAt)}</p>
       <p>{note.body}</p>
     </div>
   );

@@ -1,56 +1,69 @@
 import React, { useState, useEffect } from 'react';
-// import PropTypes from 'prop-types';
 import NoteList from '../component/NoteList';
 import SearchBar from '../component/SearchBar';
 import {
-  getAllNotes,
   getArchivedNotes,
   deleteNote,
   archiveNote,
   unarchiveNote,
-} from '../utils/index';
+} from '../utils/api';
 
 function ArchivePage() {
-  const [notes, setNotes] = useState(getAllNotes());
+  const [notes, setNotes] = useState([]);
   const [filteredNotes, setFilteredNotes] = useState(null);
   const [keyword, setKeyword] = useState('');
 
   useEffect(() => {
-    setNotes(getAllNotes());
+    async function fetchData() {
+      const result = await getArchivedNotes();
+      if (!result.error) {
+        setNotes(result.data);
+      }
+    }
+    fetchData();
   }, []);
 
-  const onDeleteHandler = (id) => {
-    deleteNote(id);
-    updateNotes();
+  const onDeleteHandler = async (id) => {
+    const result = await deleteNote(id);
+    if (!result.error) {
+      updateNotes();
+    }
   };
 
   const onKeywordChangeHandler = (newKeyword) => {
     setKeyword(newKeyword);
-    const filteredNotes = getAllNotes().filter(
+    const filteredNotes = notes.filter(
       (note) => note.title.toLowerCase().includes(newKeyword.toLowerCase())
     );
 
     setFilteredNotes(filteredNotes);
   };
 
-  const onArchiveHandler = (id) => {
-    archiveNote(id);
-    updateNotes();
+  const onArchiveHandler = async (id) => {
+    const result = await archiveNote(id);
+    if (!result.error) {
+      updateNotes();
+    }
   };
 
-  const onUnarchiveHandler = (id) => {
-    unarchiveNote(id);
-    updateNotes();
+  const onUnarchiveHandler = async (id) => {
+    const result = await unarchiveNote(id);
+    if (!result.error) {
+      updateNotes();
+    }
   };
 
-  const updateNotes = () => {
-    setNotes(getAllNotes());
-    setFilteredNotes(null);
+  const updateNotes = async () => {
+    const result = await getArchivedNotes();
+    if (!result.error) {
+      setNotes(result.data);
+      setFilteredNotes(null);
+    }
   };
 
   const archivedNotes = filteredNotes
     ? filteredNotes.filter((note) => note.archived)
-    : getArchivedNotes();
+    : notes;
 
   return (
     <div className="note-app__body">

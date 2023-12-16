@@ -1,3 +1,13 @@
+:root {
+  --font-color: #333;
+  --background-color: #eee;
+}
+
+[data-theme='dark'] {
+  --font-color: #eee;
+  --background-color: #333;
+}
+
 * {
   padding: 0;
   margin: 0;
@@ -6,23 +16,22 @@
 
 body {
   font-family: 'Inter', sans-serif;
-  background-color: #202124;
-  color: white;
+  background-color: var(--background-color);
+  color: var(--font-color);
 }
 
 input, textarea {
   padding: 12px;
   margin: 12px 0;
   font-family: 'Inter', sans-serif;
-  background-color: transparent;
-  color: white;
+  background-color: var(--background-color);
+  color: var(--font-color);
   border: 1px solid #aaa;
   border-radius: 4px;
 }
 
 input::placeholder, textarea::placeholder {
   color: #aaa;
-  font-weight: bold;
 }
 
 header h1 {
@@ -54,9 +63,8 @@ main {
 .note-app__header h1 {
   margin: 8px 0;
   flex: 1;
-  color: white;
+  color: var(--font-color);
 }
-
 
 .note-app__body {
   max-width: 1000px;
@@ -94,13 +102,16 @@ main {
   min-height: 175px;
 }
 
-.note-input button {
+.note-input button,
+.login-input button,
+.register-input button,
+.contact-input button {
   display: block;
   width: 100%;
   padding: 8px;
   background-color: transparent;
   font-family: 'Inter', sans-serif;
-  color: white;
+  color: var(--font-color);
   border: 1px solid #aaa;
   border-radius: 4px;
   font-weight: bold;
@@ -192,11 +203,48 @@ main {
 
 .note-item__detail-button {
   border-left: 1px solid #aaa;
-  color: white;
+  color: var(--font-color);
 }
 
 .note-item__detail-button:hover {
   color: green;
+}
+
+.login-page h2,
+.register-page h2 {
+  font-weight: normal;
+}
+ 
+.login-input,
+.register-input,
+.contact-input {
+  margin-top: 16px;
+}
+ 
+.login-input input,
+.register-input input,
+.contact-input input {
+  display: block;
+  padding: 16px;
+  width: 100%;
+  margin: 8px 0;
+  font-size: 24px;
+  background-color: transparent;
+  border: 2px dashed black;
+  border-radius: 8px;
+}
+ 
+.login-input button,
+.register-input button,
+.contact-input button {
+  display: block;
+  width: 100%;
+  padding: 16px;
+  font-size: 24px;
+  background-color: tan;
+  border: 2px dashed black;
+  border-radius: 8px;
+  margin: 16px 0;
 }
 
 @media only screen and (min-width: 500px) {
@@ -215,7 +263,7 @@ main {
   }
 }
 
-@media only screen and (min-width: 800px) {
+@media only screen and (min-width: 1200px) {
   .notes-list {
     grid-template-columns: repeat(4, 1fr);
   }

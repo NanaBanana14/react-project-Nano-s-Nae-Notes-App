@@ -1,25 +1,41 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useSearchParams } from 'react-router-dom';
 import NoteList from '../component/NoteList';
 import SearchBar from '../component/SearchBar';
 import {
-  getAllNotes,
   getActiveNotes,
   deleteNote,
   archiveNote,
   unarchiveNote,
-} from '../utils/index';
+} from '../utils/api';
 
 function HomePageWrapper() {
   const [searchParams, setSearchParams] = useSearchParams();
   const keyword = searchParams.get('keyword');
+  const [notes, setNotes] = useState([]);
+
+  useEffect(() => {
+    const fetchNotes = async () => {
+      const { data } = await getActiveNotes();
+      setNotes(data);
+    };
+
+    fetchNotes();
+  }, []);
 
   function changeSearchParams(newKeyword) {
     setSearchParams({ keyword: newKeyword });
   }
 
-  return <HomePage defaultKeyword={keyword} keywordChange={changeSearchParams} />;
+  return (
+    <HomePage
+      notes={notes}
+      defaultKeyword={keyword}
+      keywordChange={changeSearchParams}
+      setNotes={setNotes}
+    />
+  );
 }
 
 class HomePage extends React.Component {
@@ -27,7 +43,6 @@ class HomePage extends React.Component {
     super(props);
 
     this.state = {
-      notes: getAllNotes(),
       keyword: props.defaultKeyword || '',
     };
 
@@ -37,47 +52,45 @@ class HomePage extends React.Component {
     this.onUnarchiveHandler = this.onUnarchiveHandler.bind(this);
   }
 
+  async componentDidMount() {
+    this.fetchNotes();
+  }
+
+  async fetchNotes() {
+    const { data } = await getActiveNotes();
+    this.props.setNotes(data);
+  }
+
   onDeleteHandler(id) {
-    deleteNote(id);
-    this.updateNotes();
+    deleteNote(id).then(() => this.fetchNotes());
   }
 
   onArchiveHandler(id) {
-    archiveNote(id);
-    this.updateNotes();
+    archiveNote(id).then(() => this.fetchNotes());
   }
 
   onUnarchiveHandler(id) {
-    unarchiveNote(id);
-    this.updateNotes();
+    unarchiveNote(id).then(() => this.fetchNotes());
   }
 
   onKeywordChangeHandler(keyword) {
-    this.setState(() => {
-      return {
-        keyword,
-      };
-    });
-
+    this.setState({ keyword });
     this.props.keywordChange(keyword);
   }
 
-  updateNotes() {
-    this.setState({
-      notes: getAllNotes(),
-    });
-  }
-
   render() {
-    const activeNotes = getActiveNotes().filter((note) => {
-      return note.title.toLowerCase().includes(this.state.keyword.toLowerCase());
-    });
+    const activeNotes = this.props.notes.filter((note) =>
+      note.title.toLowerCase().includes(this.state.keyword.toLowerCase())
+    );
 
     return (
       <div className="note-app__body">
         <h1 className="note-app__header">My Notes List</h1>
         <h2>Search Notes</h2>
-        <SearchBar keyword={this.state.keyword} keywordChange={this.onKeywordChangeHandler} />
+        <SearchBar
+          keyword={this.state.keyword}
+          keywordChange={this.onKeywordChangeHandler}
+        />
 
         <h2>Notes List</h2>
         <NoteList
@@ -96,6 +109,7 @@ class HomePage extends React.Component {
 HomePage.propTypes = {
   defaultKeyword: PropTypes.string,
   keywordChange: PropTypes.func.isRequired,
+  setNotes: PropTypes.func.isRequired,
 };
 
 export default HomePageWrapper;
